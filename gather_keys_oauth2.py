@@ -14,7 +14,7 @@ from oauthlib.oauth2.rfc6749.errors import MismatchingStateError, MissingTokenEr
 
 class OAuth2Server:
     def __init__(self, client_id, client_secret,
-                 redirect_uri='http://127.0.0.1:8080/'):
+                 redirect_uri='https://127.0.0.1:18088/'):
         """ Initialize the FitbitOauth2Client """
         self.success_html = """
             <h1>You are now authorized to access the Fitbit API!</h1>
@@ -42,6 +42,9 @@ class OAuth2Server:
 
         # Same with redirect_uri hostname and port.
         urlparams = urlparse(self.redirect_uri)
+        cherrypy.server.ssl_certificate = "keys/cert.pem"
+        cherrypy.server.ssl_private_key = "keys/privkey.pem"
+        cherrypy.server.ssl_module = 'builtin'
         cherrypy.config.update({'server.socket_host': urlparams.hostname,
                                 'server.socket_port': urlparams.port})
 
@@ -82,8 +85,8 @@ class OAuth2Server:
 
 if __name__ == '__main__':
 
-    if not (len(sys.argv) == 3):
-        print("Arguments: client_id and client_secret")
+    if (len(sys.argv) < 3):
+        print("Arguments: client_id and client_secret [redirect_url]")
         sys.exit(1)
 
     server = OAuth2Server(*sys.argv[1:])

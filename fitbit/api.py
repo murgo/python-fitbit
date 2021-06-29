@@ -20,7 +20,7 @@ from .utils import curry
 class FitbitOauth2Client(object):
     API_ENDPOINT = "https://api.fitbit.com"
     AUTHORIZE_ENDPOINT = "https://www.fitbit.com"
-    API_VERSION = 1
+    API_VERSION = 1.2
 
     request_token_url = "%s/oauth2/token" % API_ENDPOINT
     authorization_url = "%s/oauth2/authorize" % AUTHORIZE_ENDPOINT
@@ -188,7 +188,7 @@ class Fitbit(object):
     METRIC = 'en_UK'
 
     API_ENDPOINT = "https://api.fitbit.com"
-    API_VERSION = 1
+    API_VERSION = 1.2
     WEEK_DAYS = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY']
     PERIODS = ['1d', '7d', '30d', '1w', '1m', '3m', '6m', '1y', 'max']
 
@@ -806,6 +806,23 @@ class Fitbit(object):
             year=date.year,
             month=date.month,
             day=date.day
+        )
+        return self.make_request(url)
+
+    def list_sleep(self, date):
+        """
+        Get Sleep Logs List
+        The Get Sleep Logs List endpoint returns a list of a user's sleep logs (including naps) before or after a given day with offset, limit, and sort order.
+        date should be a datetime.date object.
+        """
+        url = "{0}/{1}/user/-/sleep/list.json?beforeDate={year}-{month}-{day}&offset={offset}&limit={limit}&sort={sort}".format(
+            *self._get_common_args(),
+            year=date.year,
+            month=date.month,
+            day=date.day,
+            offset=0,
+            limit=2,
+            sort="desc"
         )
         return self.make_request(url)
 
